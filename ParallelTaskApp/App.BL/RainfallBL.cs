@@ -28,28 +28,28 @@ namespace ParallelTaskApp.App.BL
             {
                 case "June":
                     if (min)
-                        target = data.Aggregate((x, y) => x.VolumeJune < y.VolumeJune || y.VolumeJune < 0 ? x : y);
+                        target = data.Aggregate((x, y) => x.VolumeJune < y.VolumeJune ? x : y);
                     else
                         target = data.Aggregate((x, y) => x.VolumeJune > y.VolumeJune ? x : y);
                     res = target.VolumeJune;
                     break;
                 case "July":
                     if (min)
-                        target = data.Aggregate((x, y) => x.VolumeJuly < y.VolumeJuly || y.VolumeJuly < 0 ? x : y);
+                        target = data.Aggregate((x, y) => x.VolumeJuly < y.VolumeJuly ? x : y);
                     else
                         target = data.Aggregate((x, y) => x.VolumeJuly > y.VolumeJuly ? x : y);
                     res = target.VolumeJuly;
                     break;
                 case "August":
                     if (min)
-                        target = data.Aggregate((x, y) => x.VolumeAugust < y.VolumeAugust || y.VolumeAugust < 0 ? x : y);
+                        target = data.Aggregate((x, y) => x.VolumeAugust < y.VolumeAugust ? x : y);
                     else
                         target = data.Aggregate((x, y) => x.VolumeAugust > y.VolumeAugust ? x : y);
                     res = target.VolumeAugust;
                     break;
                 default:
                     if (min)
-                        target = data.Aggregate((x, y) => x.VolumeTotal < y.VolumeTotal || y.VolumeTotal < 0 ? x : y);
+                        target = data.Aggregate((x, y) => x.VolumeTotal < y.VolumeTotal ? x : y);
                     else
                         target = data.Aggregate((x, y) => x.VolumeTotal > y.VolumeTotal ? x : y);
                     res = target.VolumeTotal;

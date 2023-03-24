@@ -75,11 +75,11 @@ namespace ParallelTaskApp.App.DAL
                             res.Add(new RainfallDataRow(
                                 reader["Subdivision"].ToString(),
                                 (int)reader["YEAR"],
-                                (double)reader["JUN"],
-                                (double)reader["JUL"],
-                                (double)reader["AUG"],
-                                (double)reader["SEP"],
-                                (double)reader["JUN_SEP"]
+                                Math.Max((double)reader["JUN"], 0.0),
+                                Math.Max((double)reader["JUL"], 0.0),
+                                Math.Max((double)reader["AUG"], 0.0),
+                                Math.Max((double)reader["SEP"], 0.0),
+                                Math.Max((double)reader["JUN_SEP"], 0.0)
                                 ));
                         }
                     }
@@ -105,11 +105,11 @@ namespace ParallelTaskApp.App.DAL
                             entry.Value.Add(new RainfallDataRow(
                                 reader["Subdivision"].ToString(),
                                 (int)reader["YEAR"],
-                                (double)reader["JUN"],
-                                (double)reader["JUL"],
-                                (double)reader["AUG"],
-                                (double)reader["SEP"],
-                                (double)reader["JUN_SEP"]
+                                Math.Max((double)reader["JUN"], 0.0),
+                                Math.Max((double)reader["JUL"], 0.0),
+                                Math.Max((double)reader["AUG"], 0.0),
+                                Math.Max((double)reader["SEP"], 0.0),
+                                Math.Max((double)reader["JUN_SEP"], 0.0)
                                 ));
                         }
                     }
@@ -159,11 +159,11 @@ namespace ParallelTaskApp.App.DAL
                             entry.Value.Add(new RainfallDataRow(
                                 reader["Subdivision"].ToString(),
                                 (int)reader["YEAR"],
-                                (double)reader["JUN"],
-                                (double)reader["JUL"],
-                                (double)reader["AUG"],
-                                (double)reader["SEP"],
-                                (double)reader["JUN_SEP"]
+                                Math.Max((double)reader["JUN"], 0.0),
+                                Math.Max((double)reader["JUL"], 0.0),
+                                Math.Max((double)reader["AUG"], 0.0),
+                                Math.Max((double)reader["SEP"], 0.0),
+                                Math.Max((double)reader["JUN_SEP"], 0.0)
                                 ));
                         }
                     }
@@ -212,7 +212,7 @@ namespace ParallelTaskApp.App.DAL
                     {
                         while (reader.Read())
                         {
-                            res.Add(reader["Subdivision"].ToString(), (double)reader["JUN_SEP"]);
+                            res.Add(reader["Subdivision"].ToString(), Math.Max((double)reader["JUN_SEP"], 0.0));
                         }
                     }
                 }
@@ -235,7 +235,7 @@ namespace ParallelTaskApp.App.DAL
                     {
                         while (reader.Read())
                         {
-                            res.Add((int)reader["YEAR"], (double)reader["JUN_SEP"]);
+                            res.Add((int)reader["YEAR"], Math.Max((double)reader["JUN_SEP"], 0.0));
                         }
                     }
                 }
