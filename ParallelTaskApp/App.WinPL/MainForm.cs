@@ -45,20 +45,39 @@ namespace ParallelTaskApp.App.WinPL
 
             if (!checkBoxDebug.Checked)
             {
+                var temp = rainfallBL.GetMinMaxVolumes(true);
+                var min = temp.Key;
+                var max = temp.Value;
 
-                var min = rainfallBL.GetTopVolume(true, true);
-                var max = rainfallBL.GetTopVolume(false, true);
+                string monthMin, monthMax;
 
-                textBox1.Text += "Минимум: " + min.Key + " (" + min.Value.Subdivision + ", " + min.Value.Year + ")" + Environment.NewLine;
-                textBox1.Text += "Максимум: " + max.Key + " (" + max.Value.Subdivision + ", " + max.Value.Year + ")";
+                if (min.Key == min.Value.VolumeJune)
+                    monthMin = "июнь";
+                else if (min.Key == min.Value.VolumeJuly)
+                    monthMin = "июль";
+                else if (min.Key == min.Value.VolumeAugust)
+                    monthMin = "август";
+                else monthMin = "сентябрь";
+
+                if (max.Key == max.Value.VolumeJune)
+                    monthMax = "июнь";
+                else if (max.Key == max.Value.VolumeJuly)
+                    monthMax = "июль";
+                else if (max.Key == max.Value.VolumeAugust)
+                    monthMax = "август";
+                else monthMax = "сентябрь";
+
+                textBox1.Text += "Минимум: " + min.Key + " (" + min.Value.Subdivision + ", " + monthMin + " " + min.Value.Year + ")" + Environment.NewLine;
+                textBox1.Text += "Максимум: " + max.Key + " (" + max.Value.Subdivision + ", " + monthMax + " " + max.Value.Year + ")";
             }
             else
             {
                 var watch = new System.Diagnostics.Stopwatch();
                 watch.Start();
 
-                var min = rainfallBL.GetTopVolume(true, false);
-                var max = rainfallBL.GetTopVolume(false, false);
+                var temp = rainfallBL.GetMinMaxVolumes(false);
+                var min = temp.Key;
+                var max = temp.Value;
 
                 watch.Stop();
 
@@ -66,13 +85,32 @@ namespace ParallelTaskApp.App.WinPL
 
                 watch.Restart();
 
-                var min2 = rainfallBL.GetTopVolume(true, true);
-                var max2 = rainfallBL.GetTopVolume(false, true);
+                var temp2 = rainfallBL.GetMinMaxVolumes(true);
+                var min2 = temp2.Key;
+                var max2 = temp2.Value;
 
                 watch.Stop();
 
-                textBox1.Text += "Минимум: " + min2.Key + " (" + min2.Value.Subdivision + ", " + min2.Value.Year + ")" + Environment.NewLine;
-                textBox1.Text += "Максимум: " + max2.Key + " (" + max2.Value.Subdivision + ", " + max2.Value.Year + ")";
+                string monthMin, monthMax;
+
+                if (min2.Key == min2.Value.VolumeJune)
+                    monthMin = "июнь";
+                else if (min2.Key == min2.Value.VolumeJuly)
+                    monthMin = "июль";
+                else if (min2.Key == min2.Value.VolumeAugust)
+                    monthMin = "август";
+                else monthMin = "сентябрь";
+
+                if (max2.Key == max2.Value.VolumeJune)
+                    monthMax = "июнь";
+                else if (max2.Key == max2.Value.VolumeJuly)
+                    monthMax = "июль";
+                else if (max2.Key == max2.Value.VolumeAugust)
+                    monthMax = "август";
+                else monthMax = "сентябрь";
+
+                textBox1.Text += "Минимум: " + min2.Key + " (" + min2.Value.Subdivision + ", " + monthMin + " " + min2.Value.Year + ")" + Environment.NewLine;
+                textBox1.Text += "Максимум: " + max2.Key + " (" + max2.Value.Subdivision + ", " + monthMax + " " + max2.Value.Year + ")";
 
                 labelParallel.Text = "||: " + watch.ElapsedMilliseconds.ToString() + "ms";
             }

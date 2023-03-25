@@ -7,3 +7,4 @@ D:\Дмитрий\GitHub\ParallelTaskApp\ParallelTaskApp\obj\Debug\ParallelTaskA
 D:\Дмитрий\GitHub\ParallelTaskApp\ParallelTaskApp\obj\Debug\ParallelTaskApp.pdb
 D:\Дмитрий\GitHub\ParallelTaskApp\ParallelTaskApp\bin\Debug\ParallelTaskApp.pdb
 D:\Дмитрий\GitHub\ParallelTaskApp\ParallelTaskApp\obj\Debug\ParallelTaskApp.App.WinPL.MainForm.resources
+D:\Дмитрий\GitHub\ParallelTaskApp\ParallelTaskApp\obj\Debug\ParallelTaskApp.csprojAssemblyReference.cache

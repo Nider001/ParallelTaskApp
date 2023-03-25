@@ -49,19 +49,19 @@ namespace ParallelTaskApp.App.BL
                     break;
                 default:
                     if (min)
-                        target = data.Aggregate((x, y) => x.VolumeTotal < y.VolumeTotal ? x : y);
+                        target = data.Aggregate((x, y) => x.VolumeSeptember < y.VolumeSeptember ? x : y);
                     else
-                        target = data.Aggregate((x, y) => x.VolumeTotal > y.VolumeTotal ? x : y);
-                    res = target.VolumeTotal;
+                        target = data.Aggregate((x, y) => x.VolumeSeptember > y.VolumeSeptember ? x : y);
+                    res = target.VolumeSeptember;
                     break;
             }
 
             return new KeyValuePair<double, RainfallDataRow>(res, target);
         }
 
-        public KeyValuePair<double, RainfallDataRow> GetTopVolume(bool min, bool parallel)
+        private KeyValuePair<double, RainfallDataRow> GetTopVolume(bool min, bool parallel)
         {
-            string[] columns = new string[] { "June", "July", "August", "Total" };
+            string[] columns = new string[] { "June", "July", "August", "September" };
             KeyValuePair<double, RainfallDataRow> res;
 
             var data = rainfallDA.ExtractData();
@@ -130,6 +130,44 @@ namespace ParallelTaskApp.App.BL
             }
 
             return res;
+        }
+
+        public KeyValuePair<KeyValuePair<double, RainfallDataRow>, KeyValuePair<double, RainfallDataRow>> GetMinMaxVolumes(bool parallel)
+        {
+            double minValue = 0, maxValue = 0;
+            RainfallDataRow minRow = new RainfallDataRow(), maxRow = new RainfallDataRow();
+
+            if (parallel)
+            {
+                Parallel.Invoke(
+                    () =>
+                    {
+                        var temp = GetTopVolume(true, true);
+                        minValue = temp.Key;
+                        minRow = temp.Value;
+                    },
+                    () =>
+                    {
+                        var temp = GetTopVolume(false, true);
+                        maxValue = temp.Key;
+                        maxRow = temp.Value;
+                    }
+                );
+            }
+            else
+            {
+                var temp = GetTopVolume(true, true);
+                minValue = temp.Key;
+                minRow = temp.Value;
+
+                temp = GetTopVolume(false, true);
+                maxValue = temp.Key;
+                maxRow = temp.Value;
+            }
+
+            return new KeyValuePair<KeyValuePair<double, RainfallDataRow>, KeyValuePair<double, RainfallDataRow>>(
+                new KeyValuePair<double, RainfallDataRow>(minValue, minRow),
+                new KeyValuePair<double, RainfallDataRow>(maxValue, maxRow));
         }
 
         public Dictionary<int, double> GetAveragesByYear()
