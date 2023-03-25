@@ -117,7 +117,7 @@ namespace ParallelTaskApp.App.DAL
             }
         }
 
-        public Dictionary<string, List<RainfallDataRow>> ExtractDataBySubdivision(bool parallel)
+        public Dictionary<string, List<RainfallDataRow>> ExtractDataBySubdivision()
         {
             var subdivisions = GetAllSubdivisions();
 
@@ -125,19 +125,9 @@ namespace ParallelTaskApp.App.DAL
 
             subdivisions.ForEach(x => res.Add(x, new List<RainfallDataRow>()));
 
-            if (parallel)
+            foreach (var entry in res)
             {
-                Parallel.ForEach(res, entry =>
-                {
-                    PutDataIntoSubdivisionEntry(entry);
-                });
-            }
-            else
-            {
-                foreach (var entry in res)
-                {
-                    PutDataIntoSubdivisionEntry(entry);
-                }
+                PutDataIntoSubdivisionEntry(entry);
             }
 
             return res;
@@ -171,7 +161,7 @@ namespace ParallelTaskApp.App.DAL
             }
         }
 
-        public Dictionary<int, List<RainfallDataRow>> ExtractDataByYear(bool parallel, int startYear = 1901, int endYear = 2021)
+        public Dictionary<int, List<RainfallDataRow>> ExtractDataByYear(int startYear = 1901, int endYear = 2021)
         {
             Dictionary<int, List<RainfallDataRow>> res = new Dictionary<int, List<RainfallDataRow>>(endYear - startYear);
 
@@ -180,19 +170,9 @@ namespace ParallelTaskApp.App.DAL
                 res.Add(i, new List<RainfallDataRow>());
             }
 
-            if (parallel)
+            foreach (var entry in res)
             {
-                Parallel.ForEach(res, entry =>
-                {
-                    PutDataIntoYearEntry(entry);
-                });
-            }
-            else
-            {
-                foreach (var entry in res)
-                {
-                    PutDataIntoYearEntry(entry);
-                }
+                PutDataIntoYearEntry(entry);
             }
 
             return res;

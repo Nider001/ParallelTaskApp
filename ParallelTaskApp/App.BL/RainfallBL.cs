@@ -59,111 +59,121 @@ namespace ParallelTaskApp.App.BL
             return new KeyValuePair<double, RainfallDataRow>(res, target);
         }
 
-        private KeyValuePair<double, RainfallDataRow> GetTopVolume(bool min, bool parallel)
+        private KeyValuePair<double, RainfallDataRow> GetTopVolumeLinear(bool min)
         {
             string[] columns = new string[] { "June", "July", "August", "September" };
             KeyValuePair<double, RainfallDataRow> res;
 
             var data = rainfallDA.ExtractData();
 
-            if (parallel)
+            if (min)
             {
-                object locker = new object();
+                res = new KeyValuePair<double, RainfallDataRow>(double.MaxValue, new RainfallDataRow());
 
-                if (min)
+                foreach (var month in columns)
                 {
-                    res = new KeyValuePair<double, RainfallDataRow>(double.MaxValue, new RainfallDataRow());
+                    var temp = FindTopInColumn(data, month, true);
 
-                    Parallel.ForEach(columns, month =>
-                    {
-                        var temp = FindTopInColumn(data, month, true);
-
-                        lock (locker)
-                        {
-                            if (res.Key > temp.Key)
-                                res = temp;
-                        }
-                    });
-                }
-                else
-                {
-                    res = new KeyValuePair<double, RainfallDataRow>(double.MinValue, new RainfallDataRow());
-
-                    Parallel.ForEach(columns, month =>
-                    {
-                        var temp = FindTopInColumn(data, month, false);
-
-                        lock (locker)
-                        {
-                            if (res.Key < temp.Key)
-                                res = temp;
-                        }
-                    });
+                    if (res.Key > temp.Key)
+                        res = temp;
                 }
             }
             else
             {
-                if (min)
+                res = new KeyValuePair<double, RainfallDataRow>(double.MinValue, new RainfallDataRow());
+
+                foreach (var month in columns)
                 {
-                    res = new KeyValuePair<double, RainfallDataRow>(double.MaxValue, new RainfallDataRow());
+                    var temp = FindTopInColumn(data, month, false);
 
-                    foreach (var month in columns)
-                    {
-                        var temp = FindTopInColumn(data, month, true);
-
-                        if (res.Key > temp.Key)
-                            res = temp;
-                    }
-                }
-                else
-                {
-                    res = new KeyValuePair<double, RainfallDataRow>(double.MinValue, new RainfallDataRow());
-
-                    foreach (var month in columns)
-                    {
-                        var temp = FindTopInColumn(data, month, false);
-
-                        if (res.Key < temp.Key)
-                            res = temp;
-                    }
+                    if (res.Key < temp.Key)
+                        res = temp;
                 }
             }
 
             return res;
         }
 
-        public KeyValuePair<KeyValuePair<double, RainfallDataRow>, KeyValuePair<double, RainfallDataRow>> GetMinMaxVolumes(bool parallel)
+        private KeyValuePair<double, RainfallDataRow> GetTopVolumeParallel(bool min)
+        {
+            string[] columns = new string[] { "June", "July", "August", "September" };
+            KeyValuePair<double, RainfallDataRow> res;
+
+            var data = rainfallDA.ExtractData();
+
+            object locker = new object();
+
+            if (min)
+            {
+                res = new KeyValuePair<double, RainfallDataRow>(double.MaxValue, new RainfallDataRow());
+
+                Parallel.ForEach(columns, month =>
+                {
+                    var temp = FindTopInColumn(data, month, true);
+
+                    lock (locker)
+                    {
+                        if (res.Key > temp.Key)
+                            res = temp;
+                    }
+                });
+            }
+            else
+            {
+                res = new KeyValuePair<double, RainfallDataRow>(double.MinValue, new RainfallDataRow());
+
+                Parallel.ForEach(columns, month =>
+                {
+                    var temp = FindTopInColumn(data, month, false);
+
+                    lock (locker)
+                    {
+                        if (res.Key < temp.Key)
+                            res = temp;
+                    }
+                });
+            }
+
+            return res;
+        }
+
+        public KeyValuePair<KeyValuePair<double, RainfallDataRow>, KeyValuePair<double, RainfallDataRow>> GetMinMaxVolumesLinear()
         {
             double minValue = 0, maxValue = 0;
             RainfallDataRow minRow = new RainfallDataRow(), maxRow = new RainfallDataRow();
 
-            if (parallel)
-            {
-                Parallel.Invoke(
-                    () =>
-                    {
-                        var temp = GetTopVolume(true, true);
-                        minValue = temp.Key;
-                        minRow = temp.Value;
-                    },
-                    () =>
-                    {
-                        var temp = GetTopVolume(false, true);
-                        maxValue = temp.Key;
-                        maxRow = temp.Value;
-                    }
-                );
-            }
-            else
-            {
-                var temp = GetTopVolume(true, true);
-                minValue = temp.Key;
-                minRow = temp.Value;
+            var temp = GetTopVolumeLinear(true);
+            minValue = temp.Key;
+            minRow = temp.Value;
 
-                temp = GetTopVolume(false, true);
-                maxValue = temp.Key;
-                maxRow = temp.Value;
-            }
+            temp = GetTopVolumeLinear(false);
+            maxValue = temp.Key;
+            maxRow = temp.Value;
+
+            return new KeyValuePair<KeyValuePair<double, RainfallDataRow>, KeyValuePair<double, RainfallDataRow>>(
+                new KeyValuePair<double, RainfallDataRow>(minValue, minRow),
+                new KeyValuePair<double, RainfallDataRow>(maxValue, maxRow));
+        }
+
+        public KeyValuePair<KeyValuePair<double, RainfallDataRow>, KeyValuePair<double, RainfallDataRow>> GetMinMaxVolumesParallel()
+        {
+            double minValue = 0, maxValue = 0;
+            RainfallDataRow minRow = new RainfallDataRow(), maxRow = new RainfallDataRow();
+
+            Parallel.Invoke(
+                () =>
+                {
+                    var temp = GetTopVolumeParallel(true);
+                    minValue = temp.Key;
+                    minRow = temp.Value;
+                },
+                () =>
+                {
+                    var temp = GetTopVolumeParallel(false);
+                    maxValue = temp.Key;
+                    maxRow = temp.Value;
+                }
+            );
 
             return new KeyValuePair<KeyValuePair<double, RainfallDataRow>, KeyValuePair<double, RainfallDataRow>>(
                 new KeyValuePair<double, RainfallDataRow>(minValue, minRow),
@@ -180,7 +190,37 @@ namespace ParallelTaskApp.App.BL
             return rainfallDA.GetAveragesBySubdivision();
         }
 
-        public KeyValuePair<int, int> GetMaxAboveAverageYear(bool parallel)
+        public KeyValuePair<int, int> GetMaxAboveAverageYearLinear()
+        {
+            int resYear = -1;
+            int resCount = -1;
+
+            Dictionary<int, double> averageVolumesByYear = rainfallDA.GetAveragesByYear();
+            Dictionary<string, List<RainfallDataRow>> dataBySubdivision = rainfallDA.ExtractDataBySubdivision();
+
+            foreach (int year in averageVolumesByYear.Keys)
+            {
+                int aboveAverages = 0;
+
+                foreach (var subdivision in dataBySubdivision.Keys)
+                {
+                    if (dataBySubdivision[subdivision].Any(x => x.Year == year) && dataBySubdivision[subdivision].First(x => x.Year == year).VolumeTotal > averageVolumesByYear[year])
+                    {
+                        aboveAverages++;
+                    }
+                }
+
+                if (aboveAverages > resCount)
+                {
+                    resYear = year;
+                    resCount = aboveAverages;
+                }
+            }
+
+            return new KeyValuePair<int, int>(resYear, resCount);
+        }
+
+        public KeyValuePair<int, int> GetMaxAboveAverageYearParallel()
         {
             int resYear = -1;
             int resCount = -1;
@@ -188,79 +228,49 @@ namespace ParallelTaskApp.App.BL
             Dictionary<int, double> averageVolumesByYear = new Dictionary<int, double>();
             Dictionary<string, List<RainfallDataRow>> dataBySubdivision = new Dictionary<string, List<RainfallDataRow>>();
 
-            if (parallel)
-            {
-                Parallel.Invoke(
-                    () =>
-                    {
-                        averageVolumesByYear = rainfallDA.GetAveragesByYear();
-                    },
-                    () =>
-                    {
-                        dataBySubdivision = rainfallDA.ExtractDataBySubdivision(true);
-                    }
-                );
-
-                object locker = new object();
-
-                Parallel.ForEach(averageVolumesByYear.Keys, year =>
+            Parallel.Invoke(
+                () =>
                 {
-                    int aboveAverages = 0;
-
-                    foreach (var subdivision in dataBySubdivision.Keys)
-                    {
-                        if (dataBySubdivision[subdivision].Any(x => x.Year == year) && dataBySubdivision[subdivision].First(x => x.Year == year).VolumeTotal > averageVolumesByYear[year])
-                        {
-                            aboveAverages++;
-                        }
-                    }
-
-                    lock (locker)
-                    {
-                        if (aboveAverages > resCount)
-                        {
-                            resYear = year;
-                            resCount = aboveAverages;
-                        }
-                    }
-                });
-            }
-            else
-            {
-                averageVolumesByYear = rainfallDA.GetAveragesByYear();
-                dataBySubdivision = rainfallDA.ExtractDataBySubdivision(false);
-
-                foreach (int year in averageVolumesByYear.Keys)
+                    averageVolumesByYear = rainfallDA.GetAveragesByYear();
+                },
+                () =>
                 {
-                    int aboveAverages = 0;
+                    dataBySubdivision = rainfallDA.ExtractDataBySubdivision();
+                }
+            );
 
-                    foreach (var subdivision in dataBySubdivision.Keys)
+            object locker = new object();
+
+            Parallel.ForEach(averageVolumesByYear.Keys, year =>
+            {
+                int aboveAverages = 0;
+
+                foreach (var subdivision in dataBySubdivision.Keys)
+                {
+                    if (dataBySubdivision[subdivision].Any(x => x.Year == year) && dataBySubdivision[subdivision].First(x => x.Year == year).VolumeTotal > averageVolumesByYear[year])
                     {
-                        if (dataBySubdivision[subdivision].Any(x => x.Year == year) && dataBySubdivision[subdivision].First(x => x.Year == year).VolumeTotal > averageVolumesByYear[year])
-                        {
-                            aboveAverages++;
-                        }
+                        aboveAverages++;
                     }
+                }
 
+                lock (locker)
+                {
                     if (aboveAverages > resCount)
                     {
                         resYear = year;
                         resCount = aboveAverages;
                     }
                 }
-            }
+            });
 
             return new KeyValuePair<int, int>(resYear, resCount);
         }
 
-        public Dictionary<string, double> GetSubdivisionsByVolume(bool parallel)
+        public Dictionary<string, double> GetSubdivisionsByVolume()
         {
             Dictionary<string, List<RainfallDataRow>> data;
 
-            if (parallel)
-                data = rainfallDA.ExtractDataBySubdivision(true);
-            else
-                data = rainfallDA.ExtractDataBySubdivision(false);
+            data = rainfallDA.ExtractDataBySubdivision();
 
             return data.Select(x => new KeyValuePair<string, double>(x.Key, x.Value.Sum(y => y.VolumeTotal))).ToDictionary(x => x.Key, x => x.Value);
         }

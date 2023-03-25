@@ -47,8 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App.BLL.Interfaces\ILoginBL.cs" />
-    <Compile Include="App.BLL.Interfaces\IRainfallBL.cs" />
+    <Compile Include="App.BL.Interfaces\ILoginBL.cs" />
+    <Compile Include="App.BL.Interfaces\IRainfallBL.cs" />
     <Compile Include="App.BL\LoginBL.cs" />
     <Compile Include="App.BL\RainfallBL.cs" />
     <Compile Include="App.Common\Common.cs" />

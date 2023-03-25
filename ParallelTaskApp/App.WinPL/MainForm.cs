@@ -19,7 +19,9 @@ namespace ParallelTaskApp.App.WinPL
 
         public MainForm()
         {
-            if (!LoginHandler.HandleLogin())
+            LoginHandler loginHandler = new LoginHandler();
+
+            if (!loginHandler.HandleLogin())
                 Environment.Exit(0);
 
             rainfallBL = new RainfallBL();
@@ -39,13 +41,13 @@ namespace ParallelTaskApp.App.WinPL
             labelParallel.Text = "||: 00ms";
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void ButtonMinMaxVolumes_Click(object sender, EventArgs e)
         {
             StartActionProcess();
 
             if (!checkBoxDebug.Checked)
             {
-                var temp = rainfallBL.GetMinMaxVolumes(true);
+                var temp = rainfallBL.GetMinMaxVolumesParallel();
                 var min = temp.Key;
                 var max = temp.Value;
 
@@ -75,7 +77,7 @@ namespace ParallelTaskApp.App.WinPL
                 var watch = new System.Diagnostics.Stopwatch();
                 watch.Start();
 
-                var temp = rainfallBL.GetMinMaxVolumes(false);
+                var temp = rainfallBL.GetMinMaxVolumesLinear();
                 var min = temp.Key;
                 var max = temp.Value;
 
@@ -85,7 +87,7 @@ namespace ParallelTaskApp.App.WinPL
 
                 watch.Restart();
 
-                var temp2 = rainfallBL.GetMinMaxVolumes(true);
+                var temp2 = rainfallBL.GetMinMaxVolumesParallel();
                 var min2 = temp2.Key;
                 var max2 = temp2.Value;
 
@@ -116,7 +118,7 @@ namespace ParallelTaskApp.App.WinPL
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ButtonAverageVolumesByYear_Click(object sender, EventArgs e)
         {
             StartActionProcess();
 
@@ -126,7 +128,7 @@ namespace ParallelTaskApp.App.WinPL
                 textBox1.Text += item.Key + " - " + Math.Round(item.Value, 1) + Environment.NewLine;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ButtonAverageVolumesBySubdivision_Click(object sender, EventArgs e)
         {
             StartActionProcess();
 
@@ -136,13 +138,13 @@ namespace ParallelTaskApp.App.WinPL
                 textBox1.Text += item.Key + " - " + Math.Round(item.Value, 1) + Environment.NewLine;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void ButtonGetMaxAboveAverageYear_Click(object sender, EventArgs e)
         {
             StartActionProcess();
 
             if (!checkBoxDebug.Checked)
             {
-                KeyValuePair<int, int> res = rainfallBL.GetMaxAboveAverageYear(true);
+                KeyValuePair<int, int> res = rainfallBL.GetMaxAboveAverageYearParallel();
                 textBox1.Text += res.Key + " (" + res.Value + " районов)";
             }
             else
@@ -150,7 +152,7 @@ namespace ParallelTaskApp.App.WinPL
                 var watch = new System.Diagnostics.Stopwatch();
                 watch.Start();
 
-                KeyValuePair<int, int> res = rainfallBL.GetMaxAboveAverageYear(false);
+                KeyValuePair<int, int> res = rainfallBL.GetMaxAboveAverageYearLinear();
 
                 watch.Stop();
 
@@ -158,7 +160,7 @@ namespace ParallelTaskApp.App.WinPL
 
                 watch.Restart();
 
-                KeyValuePair<int, int> res2 = rainfallBL.GetMaxAboveAverageYear(true);
+                KeyValuePair<int, int> res2 = rainfallBL.GetMaxAboveAverageYearParallel();
 
                 watch.Stop();
 
@@ -168,85 +170,31 @@ namespace ParallelTaskApp.App.WinPL
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void ButtonGetMostQuietSubdivisions_Click(object sender, EventArgs e)
         {
             StartActionProcess();
 
-            if (!checkBoxDebug.Checked)
+            var data = rainfallBL.GetSubdivisionsByVolume().OrderBy(x => x.Value);
+
+            foreach (var row in data)
             {
-                var data = rainfallBL.GetSubdivisionsByVolume(true).OrderBy(x => x.Value);
-
-                foreach (var row in data)
-                {
-                    textBox1.Text += row.Key + " - " + row.Value + Environment.NewLine;
-                }
-            }
-            else
-            {
-                var watch = new System.Diagnostics.Stopwatch();
-                watch.Start();
-
-                var data = rainfallBL.GetSubdivisionsByVolume(false).OrderBy(x => x.Value);
-
-                watch.Stop();
-
-                labelLinear.Text = "|: " + watch.ElapsedMilliseconds.ToString() + "ms";
-
-                watch.Restart();
-
-                var data2 = rainfallBL.GetSubdivisionsByVolume(true).OrderBy(x => x.Value);
-
-                watch.Stop();
-
-                foreach (var row in data2)
-                {
-                    textBox1.Text += row.Key + " - " + row.Value + Environment.NewLine;
-                }
-
-                labelParallel.Text = "||: " + watch.ElapsedMilliseconds.ToString() + "ms";
+                textBox1.Text += row.Key + " - " + row.Value + Environment.NewLine;
             }
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void ButtonGetLeastQuietSubdivisions_Click(object sender, EventArgs e)
         {
             StartActionProcess();
 
-            if (!checkBoxDebug.Checked)
+            var data = rainfallBL.GetSubdivisionsByVolume().OrderByDescending(x => x.Value);
+
+            foreach (var row in data)
             {
-                var data = rainfallBL.GetSubdivisionsByVolume(true).OrderByDescending(x => x.Value);
-
-                foreach (var row in data)
-                {
-                    textBox1.Text += row.Key + " - " + row.Value + Environment.NewLine;
-                }
-            }
-            else
-            {
-                var watch = new System.Diagnostics.Stopwatch();
-                watch.Start();
-
-                var data = rainfallBL.GetSubdivisionsByVolume(false).OrderByDescending(x => x.Value);
-
-                watch.Stop();
-
-                labelLinear.Text = "|: " + watch.ElapsedMilliseconds.ToString() + "ms";
-
-                watch.Restart();
-
-                var data2 = rainfallBL.GetSubdivisionsByVolume(true).OrderByDescending(x => x.Value);
-
-                watch.Stop();
-
-                foreach (var row in data2)
-                {
-                    textBox1.Text += row.Key + " - " + row.Value + Environment.NewLine;
-                }
-
-                labelParallel.Text = "||: " + watch.ElapsedMilliseconds.ToString() + "ms";
+                textBox1.Text += row.Key + " - " + row.Value + Environment.NewLine;
             }
         }
 
-        private void checkBoxDebug_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxDebug_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBoxDebug.Checked)
             {

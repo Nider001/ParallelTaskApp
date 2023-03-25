@@ -49,7 +49,7 @@
             this.button1.TabIndex = 1;
             this.button1.Text = "наибольшее и наименьшее количество осадков";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.ButtonMinMaxVolumes_Click);
             // 
             // button2
             // 
@@ -61,7 +61,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "среднее количество осадков по каждому году";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.ButtonAverageVolumesByYear_Click);
             // 
             // button3
             // 
@@ -73,7 +73,7 @@
             this.button3.TabIndex = 3;
             this.button3.Text = "среднее количество осадков по каждому району";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.ButtonAverageVolumesBySubdivision_Click);
             // 
             // button4
             // 
@@ -84,7 +84,7 @@
             this.button4.TabIndex = 4;
             this.button4.Text = "год, в котором уровень осадков был выше среднего в большинстве районов";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.ButtonGetMaxAboveAverageYear_Click);
             // 
             // button5
             // 
@@ -96,7 +96,7 @@
             this.button5.TabIndex = 5;
             this.button5.Text = "Районы по возрастанию количества осадков";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5.Click += new System.EventHandler(this.ButtonGetMostQuietSubdivisions_Click);
             // 
             // button6
             // 
@@ -108,7 +108,7 @@
             this.button6.TabIndex = 6;
             this.button6.Text = "Районы по убыванию количества осадков";
             this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.button6.Click += new System.EventHandler(this.ButtonGetLeastQuietSubdivisions_Click);
             // 
             // textBox1
             // 
@@ -134,7 +134,7 @@
             this.checkBoxDebug.TabIndex = 8;
             this.checkBoxDebug.Text = "Debug";
             this.checkBoxDebug.UseVisualStyleBackColor = true;
-            this.checkBoxDebug.CheckedChanged += new System.EventHandler(this.checkBoxDebug_CheckedChanged);
+            this.checkBoxDebug.CheckedChanged += new System.EventHandler(this.CheckBoxDebug_CheckedChanged);
             // 
             // labelLinear
             // 

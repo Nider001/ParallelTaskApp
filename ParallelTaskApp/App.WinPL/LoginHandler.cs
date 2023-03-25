@@ -10,16 +10,16 @@ using ParallelTaskApp.App.BL;
 
 namespace ParallelTaskApp.App.WinPL
 {
-    public static class LoginHandler
+    public class LoginHandler
     {
-        private static ILoginBL loginBL;
+        private ILoginBL loginBL;
 
-        static LoginHandler()
+        public LoginHandler()
         {
             loginBL = new LoginBL();
         }
 
-        public static bool HandleLogin()
+        public bool HandleLogin()
         {
             bool wrongLogin = false;
             bool wrongPassword = false;
