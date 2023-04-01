@@ -72,7 +72,7 @@ namespace ParallelTaskApp.App.BL
 
                 foreach (var month in columns)
                 {
-                    var temp = FindTopInColumn(data, month, true);
+                    var temp = FindTopInColumn(data, month, min);
 
                     if (res.Key > temp.Key)
                         res = temp;
@@ -84,7 +84,7 @@ namespace ParallelTaskApp.App.BL
 
                 foreach (var month in columns)
                 {
-                    var temp = FindTopInColumn(data, month, false);
+                    var temp = FindTopInColumn(data, month, min);
 
                     if (res.Key < temp.Key)
                         res = temp;
@@ -109,7 +109,7 @@ namespace ParallelTaskApp.App.BL
 
                 Parallel.ForEach(columns, month =>
                 {
-                    var temp = FindTopInColumn(data, month, true);
+                    var temp = FindTopInColumn(data, month, min);
 
                     lock (locker)
                     {
@@ -124,7 +124,7 @@ namespace ParallelTaskApp.App.BL
 
                 Parallel.ForEach(columns, month =>
                 {
-                    var temp = FindTopInColumn(data, month, false);
+                    var temp = FindTopInColumn(data, month, min);
 
                     lock (locker)
                     {
